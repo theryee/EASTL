@@ -60,9 +60,12 @@ before_script:
   - cmake --build . --config $EASTL_CONFIG
 
 script:
+    # Fail on any error
+    - set -e
     # Run Tests 
     - cd $TRAVIS_BUILD_DIR/build_$EASTL_CONFIG/test
     - ctest -C $EASTL_CONFIG -V
+    - ./fail.sh
     # Run Benchmarks
     - cd $TRAVIS_BUILD_DIR/build_$EASTL_CONFIG/benchmark
     - ctest -C $EASTL_CONFIG  -V
