@@ -22,7 +22,7 @@ EA_RESTORE_ALL_VC_WARNINGS()
 
 using namespace eastl;
 
-static eastl::hash_map<int, int> g_map;
+static eastl::hash_map<int, int> g_map; // issue #91
 
 namespace eastl
 {
