@@ -22,6 +22,8 @@ EA_RESTORE_ALL_VC_WARNINGS()
 
 using namespace eastl;
 
+static eastl::hash_map<int, int> g_map;
+
 namespace eastl
 {
 	template <> 
@@ -1175,6 +1177,10 @@ int TestHash()
 			EATEST_VERIFY(intHashMap.find(43) != intHashMap.end());
 			EATEST_VERIFY(intHashMap.find(44) != intHashMap.end());
 		#endif
+	}
+
+	{
+		g_map[1] = 1;
 	}
 
 	return nErrorCount;
