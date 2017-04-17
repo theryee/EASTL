@@ -11,6 +11,7 @@
 
 #include <EASTL/algorithm.h>
 #include <EASTL/functional.h>
+#include <EASTL/unique_ptr.h>
 #include <EASTL/vector.h>
 #include <EASTL/array.h>
 #include <EASTL/deque.h>
@@ -2337,6 +2338,13 @@ int TestAlgorithm()
 				}
 			}
 		}
+	}
+
+	// issue #92
+	{
+		eastl::vector<eastl::unique_ptr<int>> vec;
+		//eastl::sort(vec.begin(), vec.end(),  [](const eastl::unique_ptr<int>& lhs, const eastl::unique_ptr<int>& rhs) { return *lhs < *rhs; });
+		//eastl::sort(vec.begin(), vec.end(),  [](const eastl::unique_ptr<int> lhs, const eastl::unique_ptr<int> rhs) { return *lhs < *rhs; });
 	}
 
 
