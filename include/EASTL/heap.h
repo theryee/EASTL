@@ -254,6 +254,31 @@ namespace eastl
 	///    push_heap(heap.begin(), heap.end()); // Places '3' appropriately.
 	///
 	template <typename RandomAccessIterator>
+	inline void push_heap(RandomAccessIterator first, RandomAccessIterator last, typename eastl::enable_if<eastl::is_move_constructible<typename eastl::iterator_traits<RandomAccessIterator>::value_type>::value && !eastl::is_copy_constructible<typename eastl::iterator_traits<RandomAccessIterator>::value_type>::value>::type* = 0)
+	{
+		typedef typename eastl::iterator_traits<RandomAccessIterator>::difference_type difference_type;
+		typedef typename eastl::iterator_traits<RandomAccessIterator>::value_type      value_type;
+
+		const value_type tempBottom(eastl::move(*(last - 1)));
+
+		eastl::promote_heap<RandomAccessIterator, difference_type, value_type>
+						   (first, (difference_type)0, (difference_type)(last - first - 1), eastl::move(tempBottom));
+	}
+
+
+	/// push_heap
+	///
+	/// Adds an item to a heap (which is an array). The item necessarily
+	/// comes from the back of the heap (array). Thus, the insertion of a 
+	/// new item in a heap is a two step process: push_back and push_heap.
+	///
+	/// Example usage:
+	///    vector<int> heap;
+	///    
+	///    heap.push_back(3);
+	///    push_heap(heap.begin(), heap.end()); // Places '3' appropriately.
+	///
+	template <typename RandomAccessIterator, typename = typename eastl::enable_if<eastl::is_copy_constructible<typename eastl::iterator_traits<RandomAccessIterator>::value_type>::value>::type>
 	inline void push_heap(RandomAccessIterator first, RandomAccessIterator last)
 	{
 		typedef typename eastl::iterator_traits<RandomAccessIterator>::difference_type difference_type;
@@ -334,7 +359,7 @@ namespace eastl
 	/// The Compare function must work equivalently to the compare function used
 	/// to make and maintain the heap.
 	///
-	/*template <typename RandomAccessIterator, typename Compare>
+	template <typename RandomAccessIterator, typename Compare>
 	inline void pop_heap(RandomAccessIterator first, RandomAccessIterator last, Compare compare, typename eastl::enable_if<eastl::is_move_constructible<typename eastl::iterator_traits<RandomAccessIterator>::value_type>::value && !eastl::is_copy_constructible<typename eastl::iterator_traits<RandomAccessIterator>::value_type>::value>::type* = 0)
 	{
 		typedef typename eastl::iterator_traits<RandomAccessIterator>::difference_type difference_type;
@@ -344,7 +369,7 @@ namespace eastl
 		*(last - 1) = eastl::move( *first );
 		eastl::adjust_heap<RandomAccessIterator, difference_type, value_type, Compare>
 						  (first, (difference_type)0, (difference_type)(last - first - 1), 0, eastl::move(tempBottom), compare);
-	}*/
+	}
 
 
 	/// pop_heap
@@ -405,8 +430,8 @@ namespace eastl
 	}
 
 
-	/*template <typename RandomAccessIterator, typename Compare, typename = typename eastl::enable_if<eastl::is_move_constructible<typename eastl::iterator_traits<RandomAccessIterator>::value_type>::value>::type>
-	void make_heap(RandomAccessIterator first, RandomAccessIterator last, Compare compare)
+	template <typename RandomAccessIterator, typename Compare>
+	void make_heap(RandomAccessIterator first, RandomAccessIterator last, Compare compare, typename eastl::enable_if<eastl::is_move_constructible<typename eastl::iterator_traits<RandomAccessIterator>::value_type>::value && !eastl::is_copy_constructible<typename eastl::iterator_traits<RandomAccessIterator>::value_type>::value>::type* = 0)
 	{
 		typedef typename eastl::iterator_traits<RandomAccessIterator>::difference_type difference_type;
 		typedef typename eastl::iterator_traits<RandomAccessIterator>::value_type      value_type;
@@ -424,10 +449,9 @@ namespace eastl
 								  (first, parentPosition, heapSize, parentPosition, eastl::move(temp), compare);
 			} while(parentPosition != 0);
 		}
-	}*/
+	}
 
 
-	//TODO: ryee fix overloading issue!
 	template <typename RandomAccessIterator, typename Compare, typename = typename eastl::enable_if<eastl::is_copy_constructible<typename eastl::iterator_traits<RandomAccessIterator>::value_type>::value>::type>
 	void make_heap(RandomAccessIterator first, RandomAccessIterator last, Compare compare)
 	{
