@@ -2344,9 +2344,41 @@ int TestAlgorithm()
 	{
 		eastl::vector<eastl::unique_ptr<int>> vec;
 		eastl::sort(vec.begin(), vec.end(),  [](const eastl::unique_ptr<int>& lhs, const eastl::unique_ptr<int>& rhs) { return *lhs < *rhs; });
-		//eastl::sort(vec.begin(), vec.end(),  [](const eastl::unique_ptr<int> lhs, const eastl::unique_ptr<int> rhs) { return *lhs < *rhs; });
 	}
+	{
+		eastl::vector<eastl::unique_ptr<int>> vec;
+		vec.emplace_back(new int(7));
+		vec.emplace_back(new int(-42));
+		vec.emplace_back(new int(5));
+		eastl::sort(vec.begin(), vec.end(),  [](const eastl::unique_ptr<int>& lhs, const eastl::unique_ptr<int>& rhs) { return *lhs < *rhs; });
+		EATEST_VERIFY(*vec[0] == -42);
+		EATEST_VERIFY(*vec[1] == 5);
+		EATEST_VERIFY(*vec[2] == 7);
+	}
+	{
+		for(unsigned tests=0; tests<500; ++tests)
+		{
+			eastl::vector<eastl::unique_ptr<int>> vec1;
+			eastl::vector<eastl::unique_ptr<int>> vec2;
 
+			const int numbersToSort = 100;
+
+			for(int i=0; i<numbersToSort; ++i)
+			{
+				int randomNumber = random();
+				vec1.emplace_back(new int(randomNumber));
+				vec2.emplace_back(new int(randomNumber));
+			}
+
+			// used STL sort as reference for correctness
+			eastl::sort(vec1.begin(), vec1.end(),  [](const eastl::unique_ptr<int>& lhs, const eastl::unique_ptr<int>& rhs) { return *lhs < *rhs; });
+			std::sort(vec2.begin(), vec2.end(),  [](const eastl::unique_ptr<int>& lhs, const eastl::unique_ptr<int>& rhs) { return *lhs < *rhs; });
+
+			for(int i=0; i<numbersToSort; ++i){
+				EATEST_VERIFY(*vec1[i] == *vec2[i]);
+			}
+		}
+	}
 
 	EATEST_VERIFY(TestObject::IsClear());
 	TestObject::Reset();
