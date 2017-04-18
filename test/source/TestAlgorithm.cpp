@@ -23,6 +23,8 @@
 #include <EAStdC/EAMemory.h>
 #include "EASTLTest.h"  // Put this after the above so that it doesn't block any warnings from the includes above.
 
+#include <algorithm> // reference sort() implementation
+
 
 namespace eastl
 {
