@@ -54,6 +54,7 @@ before_script:
   - if [[ -n "$USE_CLANG_39" ]]; then export CXX="clang++"                                                                                ;fi
   - if [[ -n "$USE_CLANG_39" ]]; then export CXXFLAGS="$CXXFLAGS -I${CLANG_39_PATH}/include -std=c++11 -stdlib=libc++"                    ;fi
   - if [[ -n "$USE_CLANG_39" ]]; then export LDFLAGS="$LDFLAGS -L${CLANG_39_PATH}/lib"                                                    ;fi
+  - export CXXFLAGS="-ftemplate-backtrace-limit=0 $CXXFLAGS"
   - mkdir build_$EASTL_CONFIG
   - cd build_$EASTL_CONFIG
   - cmake .. -DEASTL_BUILD_BENCHMARK:BOOL=ON -DEASTL_BUILD_TESTS:BOOL=ON
