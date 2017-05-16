@@ -62,8 +62,8 @@ namespace eastl
 	/// This function requires that the value argument refer to a value
 	/// that is currently not within the heap.
 	///
-	template <typename RandomAccessIterator, typename Distance, typename T,
-		typename = typename eastl::enable_if<eastl::is_copy_assignable<typename eastl::iterator_traits<RandomAccessIterator>::value_type>::value>::type>
+	template <typename RandomAccessIterator, typename Distance, typename T/*,
+		typename = typename eastl::enable_if<eastl::is_copy_assignable<typename eastl::iterator_traits<RandomAccessIterator>::value_type>::value>::type*/>
 	inline void promote_heap(RandomAccessIterator first, Distance topPosition, Distance position, const T& value)
 	{
 		for(Distance parentPosition = (position - 1) >> 1; // This formula assumes that (position > 0). // We use '>> 1' instead of '/ 2' because we have seen VC++ generate better code with >>.
@@ -89,8 +89,8 @@ namespace eastl
 	/// This function requires that the value argument refer to a value
 	/// that is currently not within the heap.
 	///
-	template <typename RandomAccessIterator, typename Distance, typename T,
-		typename = typename eastl::enable_if<eastl::is_move_assignable<typename eastl::iterator_traits<RandomAccessIterator>::value_type>::value>::type>
+	template <typename RandomAccessIterator, typename Distance, typename T/*,
+		typename = typename eastl::enable_if<eastl::is_move_assignable<typename eastl::iterator_traits<RandomAccessIterator>::value_type>::value>::type*/>
 	inline void promote_heap(RandomAccessIterator first, Distance topPosition, Distance position, T&& value)
 	{
 		for(Distance parentPosition = (position - 1) >> 1; // This formula assumes that (position > 0). // We use '>> 1' instead of '/ 2' because we have seen VC++ generate better code with >>.
@@ -116,8 +116,8 @@ namespace eastl
 	/// This function requires that the value argument refer to a value
 	/// that is currently not within the heap.
 	///
-	template <typename RandomAccessIterator, typename Distance, typename T, typename Compare,
-		typename = typename eastl::enable_if<eastl::is_copy_assignable<typename eastl::iterator_traits<RandomAccessIterator>::value_type>::value>::type>
+	template <typename RandomAccessIterator, typename Distance, typename T, typename Compare/*,
+		typename = typename eastl::enable_if<eastl::is_copy_assignable<typename eastl::iterator_traits<RandomAccessIterator>::value_type>::value>::type*/>
 	inline void promote_heap(RandomAccessIterator first, Distance topPosition, Distance position, const T& value, Compare compare)
 	{
 		for(Distance parentPosition = (position - 1) >> 1; // This formula assumes that (position > 0). // We use '>> 1' instead of '/ 2' because we have seen VC++ generate better code with >>.
@@ -143,8 +143,8 @@ namespace eastl
 	/// This function requires that the value argument refer to a value
 	/// that is currently not within the heap.
 	///
-	template <typename RandomAccessIterator, typename Distance, typename T, typename Compare,
-		typename = typename eastl::enable_if<eastl::is_move_assignable<typename eastl::iterator_traits<RandomAccessIterator>::value_type>::value>::type>
+	template <typename RandomAccessIterator, typename Distance, typename T, typename Compare/*,
+		typename = typename eastl::enable_if<eastl::is_move_assignable<typename eastl::iterator_traits<RandomAccessIterator>::value_type>::value>::type*/>
 	inline void promote_heap(RandomAccessIterator first, Distance topPosition, Distance position, T&& value, Compare compare)
 	{
 		for(Distance parentPosition = (position - 1) >> 1; // This formula assumes that (position > 0). // We use '>> 1' instead of '/ 2' because we have seen VC++ generate better code with >>.
