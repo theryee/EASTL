@@ -322,10 +322,10 @@ namespace eastl
 		typedef typename eastl::iterator_traits<RandomAccessIterator>::difference_type difference_type;
 		typedef typename eastl::iterator_traits<RandomAccessIterator>::value_type      value_type;
 
-		const value_type tempBottom(eastl::move(*(last - 1)));
+		const value_type tempBottom(eastl::forward<value_type>(*(last - 1)));
 
 		eastl::promote_heap<RandomAccessIterator, difference_type, value_type>
-						   (first, (difference_type)0, (difference_type)(last - first - 1), eastl::move(tempBottom));
+						   (first, (difference_type)0, (difference_type)(last - first - 1), eastl::forward<const value_type>(tempBottom));
 	}
 
 
@@ -379,10 +379,10 @@ namespace eastl
 		typedef typename eastl::iterator_traits<RandomAccessIterator>::difference_type difference_type;
 		typedef typename eastl::iterator_traits<RandomAccessIterator>::value_type      value_type;
 
-		value_type tempBottom(eastl::move(*(last - 1)));
-		*(last - 1) = eastl::move(*first);
+		value_type tempBottom(eastl::forward<value_type>(*(last - 1)));
+		*(last - 1) = eastl::forward<value_type>(*first);
 		eastl::adjust_heap<RandomAccessIterator, difference_type, value_type>
-						  (first, (difference_type)0, (difference_type)(last - first - 1), 0, eastl::move(tempBottom));
+						  (first, (difference_type)0, (difference_type)(last - first - 1), 0, eastl::forward<value_type>(tempBottom));
 	}
 
 
@@ -403,10 +403,10 @@ namespace eastl
 		typedef typename eastl::iterator_traits<RandomAccessIterator>::difference_type difference_type;
 		typedef typename eastl::iterator_traits<RandomAccessIterator>::value_type      value_type;
 
-		value_type tempBottom(eastl::move(*(last - 1)));
-		*(last - 1) = eastl::move(*first);
+		value_type tempBottom(eastl::forward<value_type>(*(last - 1)));
+		*(last - 1) = eastl::forward<value_type>(*first);
 		eastl::adjust_heap<RandomAccessIterator, difference_type, value_type, Compare>
-						  (first, (difference_type)0, (difference_type)(last - first - 1), 0, eastl::move(tempBottom), compare);
+						  (first, (difference_type)0, (difference_type)(last - first - 1), 0, eastl::forward<value_type>(tempBottom), compare);
 	}
 
 
@@ -436,9 +436,9 @@ namespace eastl
 
 			do{
 				--parentPosition;
-				value_type temp(eastl::move(*(first + parentPosition)));
+				value_type temp(eastl::forward<value_type>(*(first + parentPosition)));
 				eastl::adjust_heap<RandomAccessIterator, difference_type, value_type>
-								  (first, parentPosition, heapSize, parentPosition, eastl::move(temp));
+								  (first, parentPosition, heapSize, parentPosition, eastl::forward<value_type>(temp));
 			} while(parentPosition != 0);
 		}
 	}
@@ -458,9 +458,9 @@ namespace eastl
 
 			do{
 				--parentPosition;
-				value_type temp(eastl::move(*(first + parentPosition)));
+				value_type temp(eastl::forward<value_type>(*(first + parentPosition)));
 				eastl::adjust_heap<RandomAccessIterator, difference_type, value_type, Compare>
-								  (first, parentPosition, heapSize, parentPosition, eastl::move(temp), compare);
+								  (first, parentPosition, heapSize, parentPosition, eastl::forward<value_type>(temp), compare);
 			} while(parentPosition != 0);
 		}
 	}

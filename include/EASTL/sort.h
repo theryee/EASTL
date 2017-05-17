@@ -226,7 +226,7 @@ namespace eastl
 
 			for(++iSorted; iSorted != last; ++iSorted)
 			{
-				value_type temp(eastl::move(*iSorted));
+				value_type temp(eastl::forward<value_type>(*iSorted));
 
 				iNext = iCurrent = iSorted;
 
@@ -238,10 +238,10 @@ namespace eastl
 				for(--iCurrent; (iNext != first) && compare(temp, *iCurrent); --iNext, --iCurrent)
 				{
 					EASTL_VALIDATE_COMPARE(!compare(*iCurrent, temp)); // Validate that the compare function is sane.
-					*iNext = eastl::move(*iCurrent);
+					*iNext = eastl::forward<value_type>(*iCurrent);
 				}
 
-				*iNext = eastl::move(temp);
+				*iNext = eastl::forward<value_type>(temp);
 			}
 		}
 	} // insertion_sort
@@ -258,7 +258,7 @@ namespace eastl
 
 			for(++iSorted; iSorted != last; ++iSorted)
 			{
-				value_type temp(eastl::move(*iSorted));
+				value_type temp(eastl::forward<value_type>(*iSorted));
 
 				iNext = iCurrent = iSorted;
 
@@ -270,10 +270,10 @@ namespace eastl
 				for(--iCurrent; (iNext != first) && (temp < *iCurrent); --iNext, --iCurrent)
 				{
 					EASTL_VALIDATE_COMPARE(!(*iCurrent < temp)); // Validate that the compare function is sane.
-					*iNext = eastl::move(*iCurrent);
+					*iNext = eastl::forward<value_type>(*iCurrent);
 				}
 
-				*iNext = eastl::move(temp);
+				*iNext = eastl::forward<value_type>(temp);
 			}
 		}
 	} // insertion_sort
@@ -781,15 +781,15 @@ namespace eastl
 				typedef typename eastl::iterator_traits<RandomAccessIterator>::value_type value_type;
 
 				RandomAccessIterator end(current), prev(current);
-				value_type           value(eastl::move(*current));
+				value_type           value(eastl::forward<value_type>(*current));
 
 				for(--prev; value < *prev; --end, --prev) // We skip checking for (prev >= first) because quick_sort (our caller) makes this unnecessary.
 				{
 					EASTL_VALIDATE_COMPARE(!(*prev < value)); // Validate that the compare function is sane.
-					*end = eastl::move(*prev);
+					*end = eastl::forward<value_type>(*prev);
 				}
 
-				*end = eastl::move(value);
+				*end = eastl::forward<value_type>(value);
 			}
 		}
 
@@ -806,15 +806,15 @@ namespace eastl
 				typedef typename eastl::iterator_traits<RandomAccessIterator>::value_type value_type;
 
 				RandomAccessIterator end(current), prev(current);
-				value_type           value(eastl::move(*current));
+				value_type           value(eastl::forward<value_type>(*current));
 
 				for(--prev; compare(value, *prev); --end, --prev) // We skip checking for (prev >= first) because quick_sort (our caller) makes this unnecessary.
 				{
 					EASTL_VALIDATE_COMPARE(!compare(*prev, value)); // Validate that the compare function is sane.
-					*end = eastl::move(*prev);
+					*end = eastl::forward<value_type>(*prev);
 				}
 
-				*end = eastl::move(value);
+				*end = eastl::forward<value_type>(value);
 			}
 		}
 	} // namespace Internal
@@ -833,10 +833,10 @@ namespace eastl
 			if(*i < *first)
 			{
 				EASTL_VALIDATE_COMPARE(!(*first < *i)); // Validate that the compare function is sane.
-				value_type temp(eastl::move(*i));
-				*i = eastl::move(*first);
+				value_type temp(eastl::forward<value_type>(*i));
+				*i = eastl::forward<value_type>(*first);
 				eastl::adjust_heap<RandomAccessIterator, difference_type, value_type>
-								  (first, difference_type(0), difference_type(middle - first), difference_type(0), eastl::move(temp));
+								  (first, difference_type(0), difference_type(middle - first), difference_type(0), eastl::forward<value_type>(temp));
 			}
 		}
 
@@ -857,10 +857,10 @@ namespace eastl
 			if(compare(*i, *first))
 			{
 				EASTL_VALIDATE_COMPARE(!compare(*first, *i)); // Validate that the compare function is sane.
-				value_type temp(eastl::move(*i));
-				*i = eastl::move(*first);
+				value_type temp(eastl::forward<value_type>(*i));
+				*i = eastl::forward<value_type>(*first);
 				eastl::adjust_heap<RandomAccessIterator, difference_type, value_type, Compare>
-								  (first, difference_type(0), difference_type(middle - first), difference_type(0), eastl::move(*i), compare);
+								  (first, difference_type(0), difference_type(middle - first), difference_type(0), eastl::forward<value_type>(*i), compare);
 			}
 		}
 
