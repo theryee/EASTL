@@ -2395,7 +2395,7 @@ int TestAlgorithm()
 	// issue #92
 	// disable in MSVC2013 because eastl::is_copy_constructible is always true...
 	#ifndef EA_COMPILER_MSVC_2013
-		{
+		/*{
 			eastl::vector<eastl::unique_ptr<int>> vec;
 			eastl::sort(vec.begin(), vec.end(), [](const eastl::unique_ptr<int>& lhs, const eastl::unique_ptr<int>& rhs) { return *lhs < *rhs; });
 		}
@@ -2464,7 +2464,7 @@ int TestAlgorithm()
 					EATEST_VERIFY(vec3[i] == vec4[i]);
 				}
 			}
-		}
+		}*/
 	#endif
 
 	EATEST_VERIFY(TestObject::IsClear());

@@ -740,7 +740,7 @@ namespace eastl
 
 	template <typename RandomAccessIterator, typename T, typename Compare>
 	inline RandomAccessIterator get_partition(RandomAccessIterator first, RandomAccessIterator last, const T&& pivotValue, Compare compare/*,
-		typename eastl::enable_if<eastl::is_move_constructible<T>::value>::type* = 0 */)
+		typename eastl::enable_if<eastl::is_move_constructible<T>::value>::type* = 0*/)
 	{
 		// Note: unlike the copy-constructible variant of get_partition... we can't create a temporary const move-constructible object
 
@@ -910,23 +910,23 @@ namespace eastl
 
 	namespace Internal
 	{
-		// template <typename RandomAccessIterator, typename Size,
-		// 	typename EnableCopyConstructor = typename eastl::enable_if<eastl::is_copy_constructible<typename iterator_traits<RandomAccessIterator>::value_type>::value>::type>
-		// inline void quick_sort_impl(RandomAccessIterator first, RandomAccessIterator last, Size kRecursionCount)
-		// {
-		// 	typedef typename iterator_traits<RandomAccessIterator>::value_type value_type;
+		/*template <typename RandomAccessIterator, typename Size,
+			typename = typename eastl::enable_if<eastl::is_copy_constructible<typename iterator_traits<RandomAccessIterator>::value_type>::value>::type>
+		inline void quick_sort_impl(RandomAccessIterator first, RandomAccessIterator last, Size kRecursionCount)
+		{
+			typedef typename iterator_traits<RandomAccessIterator>::value_type value_type;
 
-		// 	while(((last - first) > kQuickSortLimit) && (kRecursionCount > 0))
-		// 	{
-		// 		const RandomAccessIterator position(eastl::get_partition<RandomAccessIterator, value_type, EnableCopyConstructor>(first, last, eastl::median<value_type>(*first, *(first + (last - first) / 2), *(last - 1))));
+			while(((last - first) > kQuickSortLimit) && (kRecursionCount > 0))
+			{
+				const RandomAccessIterator position(eastl::get_partition<RandomAccessIterator, value_type>(first, last, eastl::median<value_type>(*first, *(first + (last - first) / 2), *(last - 1))));
 
-		// 		eastl::Internal::quick_sort_impl<RandomAccessIterator, Size>(position, last, --kRecursionCount);
-		// 		last = position;
-		// 	}
+				eastl::Internal::quick_sort_impl<RandomAccessIterator, Size>(position, last, --kRecursionCount);
+				last = position;
+			}
 
-		// 	if(kRecursionCount == 0)
-		// 		eastl::partial_sort<RandomAccessIterator>(first, last, last);
-		// }
+			if(kRecursionCount == 0)
+				eastl::partial_sort<RandomAccessIterator>(first, last, last);
+		}*/
 
 		template <typename RandomAccessIterator, typename Size>
 		inline void quick_sort_impl(RandomAccessIterator first, RandomAccessIterator last, Size kRecursionCount/*,
@@ -937,7 +937,7 @@ namespace eastl
 
 			while(((last - first) > kQuickSortLimit) && (kRecursionCount > 0))
 			{
-				const RandomAccessIterator position(eastl::get_partition<RandomAccessIterator, value_type>(first, last, eastl::move(eastl::median<value_type>(*first, *(first + (last - first) / 2), eastl::move(*(last - 1))))));
+				const RandomAccessIterator position(eastl::get_partition<RandomAccessIterator, value_type>(first, last, eastl::forward<const value_type>(eastl::median<const value_type>(eastl::forward<value_type>(*first), eastl::forward<value_type>(*(first + (last - first) / 2)), eastl::forward<value_type>(*(last - 1))))));
 
 				eastl::Internal::quick_sort_impl<RandomAccessIterator, Size>(position, last, --kRecursionCount);
 				last = position;
@@ -955,7 +955,7 @@ namespace eastl
 
 		// 	while(((last - first) > kQuickSortLimit) && (kRecursionCount > 0))
 		// 	{
-		// 		const RandomAccessIterator position(eastl::get_partition<RandomAccessIterator, value_type, Compare, EnableCopyConstructor>(first, last, eastl::median<value_type, Compare>(*first, *(first + (last - first) / 2), *(last - 1), compare), compare));
+		// 		const RandomAccessIterator position(eastl::get_partition<RandomAccessIterator, value_type, Compare/*, EnableCopyConstructor*/>(first, last, eastl::median<value_type, Compare>(*first, *(first + (last - first) / 2), *(last - 1), compare), compare));
 
 		// 		eastl::Internal::quick_sort_impl<RandomAccessIterator, Size, Compare>(position, last, --kRecursionCount, compare);
 		// 		last = position;
@@ -974,7 +974,7 @@ namespace eastl
 
 			while(((last - first) > kQuickSortLimit) && (kRecursionCount > 0))
 			{
-				const RandomAccessIterator position(eastl::get_partition<RandomAccessIterator, value_type, Compare>(first, last, eastl::move(eastl::median<value_type, Compare>(*first, *(first + (last - first) / 2), eastl::move(*(last - 1)), compare)), compare));
+				const RandomAccessIterator position(eastl::get_partition<RandomAccessIterator, value_type, Compare>(first, last, eastl::forward<const value_type>(eastl::median<value_type, Compare>(eastl::forward<value_type>(*first), eastl::forward<value_type>(*(first + (last - first) / 2)), eastl::forward<value_type>(*(last - 1)), compare)), compare));
 
 				eastl::Internal::quick_sort_impl<RandomAccessIterator, Size, Compare>(position, last, --kRecursionCount, compare);
 				last = position;
