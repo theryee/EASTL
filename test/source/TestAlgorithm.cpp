@@ -11,6 +11,7 @@
 
 #include <EASTL/algorithm.h>
 #include <EASTL/functional.h>
+#include <EASTL/unique_ptr.h>
 #include <EASTL/vector.h>
 #include <EASTL/array.h>
 #include <EASTL/deque.h>
@@ -22,6 +23,7 @@
 #include <EAStdC/EAMemory.h>
 #include "EASTLTest.h"  // Put this after the above so that it doesn't block any warnings from the includes above.
 
+#include <algorithm> // reference sort() implementation
 
 namespace eastl
 {
@@ -114,6 +116,57 @@ struct TestObjectNegate : public eastl::unary_function<TestObject, TestObject>
 {
 	TestObject operator()(const TestObject& a) const
 		{ return TestObject(-a.mX); }
+};
+
+struct MissingMoveConstructor
+{
+	MissingMoveConstructor()
+	{
+	}
+
+	MissingMoveConstructor(const MissingMoveConstructor & other)
+	{
+	}
+
+	MissingMoveConstructor & operator= (MissingMoveConstructor && other)
+	{
+		return *this;
+	}
+
+	MissingMoveConstructor & operator= (const MissingMoveConstructor & other)
+	{
+		return *this;
+	}
+
+	bool operator< (const MissingMoveConstructor & other) const
+	{
+		return true;
+	}
+};
+
+struct MissingMoveAssignable
+{
+	MissingMoveAssignable()
+	{
+	}
+
+	MissingMoveAssignable(const MissingMoveAssignable & other)
+	{
+	}
+
+	MissingMoveAssignable(MissingMoveAssignable && other)
+	{
+	}
+
+	MissingMoveAssignable & operator= (const MissingMoveAssignable& other)
+	{
+		return *this;
+	}
+
+	bool operator< (const MissingMoveAssignable & other) const
+	{
+		return true;
+	}
 };
 
 
@@ -592,7 +645,7 @@ static int TestMinMax()
 		// made it the way they did because of the aforementioned compiler bug.
 		// Recent versions of clang seem to generate a warning of its own. To do: we need to address this.
 		// GCC 4.8 for x86 has a compiler bug in optimized builds for this code, so we currently enable this for non-optimized builds only.
-		#if defined(EA_COMPILER_CPP11_ENABLED) && ((defined(EA_COMPILER_CLANG) && EA_COMPILER_VERSION < 302) || (defined(EA_COMPILER_GNUC) && (EA_COMPILER_VERSION >= 4007)) && !defined(__OPTIMIZE__))
+		#if defined(EA_COMPILER_CPP11_ENABLED) && ((defined(EA_COMPILER_CLANG) && EA_COMPILER_VERSION < 302 && !defined(__apple_build_version)) || (defined(EA_COMPILER_GNUC) && (EA_COMPILER_VERSION >= 4007)) && !defined(__OPTIMIZE__))
 
 			int i3(3), i2(2);
 			eastl::pair<const int&, const int&> resulti = eastl::minmax(i3, i2);
@@ -2339,22 +2392,83 @@ int TestAlgorithm()
 		}
 	}
 
+	// issue #92
+	// disable in MSVC2013 because eastl::is_copy_constructible is always true...
+	#ifndef EA_COMPILER_MSVC_2013
+		{
+			eastl::vector<eastl::unique_ptr<int>> vec;
+			eastl::sort(vec.begin(), vec.end(), [](const eastl::unique_ptr<int>& lhs, const eastl::unique_ptr<int>& rhs) { return *lhs < *rhs; });
+		}
+		/*{
+			eastl::vector<eastl::unique_ptr<int>> vec;
+			eastl::sort(vec.begin(), vec.end());
+		}
+		{
+			eastl::vector<MissingMoveConstructor> vec;
+			eastl::sort(vec.begin(), vec.end(), [](const MissingMoveConstructor& lhs, const MissingMoveConstructor& rhs) { return lhs < rhs; });
+		}
+		{
+			eastl::vector<MissingMoveConstructor> vec;
+			eastl::sort(vec.begin(), vec.end());
+		}
+		{
+			eastl::vector<MissingMoveAssignable> vec;
+			eastl::sort(vec.begin(), vec.end(), [](const MissingMoveAssignable& lhs, const MissingMoveAssignable& rhs) { return lhs < rhs; });
+		}
+		{
+			eastl::vector<MissingMoveAssignable> vec;
+			eastl::sort(vec.begin(), vec.end());
+		}
+		{
+			eastl::vector<eastl::unique_ptr<int>> vec;
+			vec.emplace_back(new int(7));
+			vec.emplace_back(new int(-42));
+			vec.emplace_back(new int(5));
+			eastl::sort(vec.begin(), vec.end(),  [](const eastl::unique_ptr<int>& lhs, const eastl::unique_ptr<int>& rhs) { return *lhs < *rhs; });
+			EATEST_VERIFY(*vec[0] == -42);
+			EATEST_VERIFY(*vec[1] == 5);
+			EATEST_VERIFY(*vec[2] == 7);
+		}
+		{
+			for(unsigned tests=0; tests<500; ++tests)
+			{
+				eastl::vector<eastl::unique_ptr<int>> vec1;
+				eastl::vector<eastl::unique_ptr<int>> vec2;
+				eastl::vector<int> vec3;
+				eastl::vector<int> vec4;
+
+				const int numbersToSort = 100;
+
+				for(int i=0; i<numbersToSort; ++i)
+				{
+					int randomNumber = rng();
+					vec1.emplace_back(new int(randomNumber));
+					vec2.emplace_back(new int(randomNumber));
+					vec3.push_back(randomNumber);
+					vec4.push_back(randomNumber);
+				}
+
+				// used STL sort as reference for correctness
+				eastl::sort(vec1.begin(), vec1.end(), [](const eastl::unique_ptr<int>& lhs, const eastl::unique_ptr<int>& rhs) { return *lhs < *rhs; });
+				std::sort(vec2.begin(), vec2.end(), [](const eastl::unique_ptr<int>& lhs, const eastl::unique_ptr<int>& rhs) { return *lhs < *rhs; });
+
+				for(int i=0; i<numbersToSort; ++i){
+					EATEST_VERIFY(*vec1[i] == *vec2[i]);
+				}
+
+				eastl::sort(vec3.begin(), vec3.end());
+				std::sort(vec4.begin(), vec4.end());
+
+				for(int i=0; i<numbersToSort; ++i){
+					EATEST_VERIFY(*vec2[i] == vec3[i]);
+					EATEST_VERIFY(vec3[i] == vec4[i]);
+				}
+			}
+		}*/
+	#endif
 
 	EATEST_VERIFY(TestObject::IsClear());
 	TestObject::Reset();
 
 	return nErrorCount;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
