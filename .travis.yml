@@ -23,6 +23,9 @@ addons:
 
 matrix:
     include:
+        - compiler: gcc "build with Buck"
+          env: USE_BUCK=yes
+          os: linux
         - compiler: clang "release build with clang to trigger MOJI check"
           env: EASTL_CONFIG=Release USE_MOJI_CHECK=yes
           os: linux
@@ -35,9 +38,6 @@ matrix:
         - compiler: clang "build with Buck"
           env: USE_BUCK=yes
           os: osx
-        - compiler: gcc "build with Buck"
-          env: USE_BUCK=yes
-          os: linux
     exclude:
       - os: osx
         compiler: gcc
