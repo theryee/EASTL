@@ -3937,6 +3937,8 @@ namespace eastl
 		template<typename ForwardIterator>
 		ForwardIterator rotate_general_impl(ForwardIterator first, ForwardIterator middle, ForwardIterator last)
 		{
+			using eastl::swap;
+
 			ForwardIterator current = middle;
 
 			do {
