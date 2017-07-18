@@ -2,11 +2,11 @@ language: cpp
 
 os:
   - linux
-  - osx
+#  - osx
 
 compiler:
   - gcc
-  - clang
+#  - clang
 
 env:
   - EASTL_CONFIG=Debug
@@ -26,15 +26,15 @@ matrix:
         - compiler: gcc "build with Buck"
           env: USE_BUCK=yes
           os: linux
-        - compiler: clang "release build with clang to trigger MOJI check"
-          env: EASTL_CONFIG=Release USE_MOJI_CHECK=yes
-          os: linux
-        - compiler: clang "debug build with clang3.9"
-          env: EASTL_CONFIG=Debug   USE_CLANG_39=yes
-          os: osx
-        - compiler: clang "release build with clang3.9"
-          env: EASTL_CONFIG=Release USE_CLANG_39=yes
-          os: osx
+#        - compiler: clang "release build with clang to trigger MOJI check"
+#          env: EASTL_CONFIG=Release USE_MOJI_CHECK=yes
+#          os: linux
+#        - compiler: clang "debug build with clang3.9"
+#          env: EASTL_CONFIG=Debug   USE_CLANG_39=yes
+#          os: osx
+#        - compiler: clang "release build with clang3.9"
+#          env: EASTL_CONFIG=Release USE_CLANG_39=yes
+#          os: osx
         - compiler: clang "build with Buck"
           env: USE_BUCK=yes
           os: osx
