@@ -1771,6 +1771,21 @@ int TestTypeTraits()
 		#endif
 	}
 
+	{
+		struct Foo {
+			int a;
+
+			Foo(int i) : a(i) {
+			}
+			Foo(Foo &&other) : a(other.a) {
+				other.a = 0;
+			}
+		};
+
+		static_assert( !std::is_trivially_copyable<Foo>::value, "std::is_trivially_copyable failed" );
+		static_assert( !eastl::is_trivially_copyable<Foo>::value, "eastl::is_trivially_copyable failed" ); 
+	}
+
 	return nErrorCount;
 }
 
