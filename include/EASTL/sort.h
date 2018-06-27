@@ -1658,7 +1658,6 @@ namespace eastl
 							bucketPosition[i + 1] = bucketPosition[i] + bucketSize[i];
 						}
 
-						uint32_t jNext = j + DigitBits;
 						for (temp = srcFirst; temp != last; ++temp)
 						{
 							IntegerType key = extractKey(*temp);
